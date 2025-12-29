@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Script Mate</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Tab Header -->
+    <header class="tab-header">
+      <div class="tab-buttons">
+        <button class="tab-btn" data-tab="translate">번역</button>
+        <button class="tab-btn active" data-tab="normal">일반</button>
+        <button class="tab-btn" data-tab="summary">요약</button>
+      </div>
+      <div class="header-actions">
+        <button class="btn-icon btn-refresh-hint" id="refreshBtn" title="스크립트 새로고침">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M23 4V10H17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M1 20V14H7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M3.51 9C4.01717 7.56678 4.87913 6.2854 6.01547 5.27542C7.1518 4.26543 8.52547 3.55976 10.0083 3.22426C11.4911 2.88875 13.0348 2.93434 14.4952 3.35677C15.9556 3.77921 17.2853 4.56471 18.36 5.64L23 10M1 14L5.64 18.36C6.71475 19.4353 8.04437 20.2208 9.50481 20.6432C10.9652 21.0657 12.5089 21.1112 13.9917 20.7757C15.4745 20.4402 16.8482 19.7346 17.9845 18.7246C19.1209 17.7146 19.9828 16.4332 20.49 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <button class="btn-icon" id="recordVideoBtn" title="전체 쉐도잉 녹음">
+          <svg viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+            <circle cx="12" cy="12" r="6" fill="currentColor"/>
+          </svg>
+        </button>
+        <button class="btn-icon" id="stopRecordVideoBtn" title="녹음 정지" style="display: none;">
+          <svg viewBox="0 0 24 24" fill="none">
+            <rect x="6" y="6" width="12" height="12" fill="currentColor"/>
+          </svg>
+        </button>
+        <button class="btn-icon" id="recordingsListBtn" title="녹음리스트">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <button class="btn-icon" id="settingsBtn" title="설정">
+          <svg viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+            <path d="M12 1V4M12 20V23M4.22 4.22L6.34 6.34M17.66 17.66L19.78 19.78M1 12H4M20 12H23M4.22 19.78L6.34 17.66M17.66 6.34L19.78 4.22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <button class="btn-icon" id="helpBtn" title="도움말">
+          <svg viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+            <path d="M9.09 9C9.3251 8.33167 9.78915 7.76811 10.4 7.40913C11.0108 7.05016 11.7289 6.91894 12.4272 7.03871C13.1255 7.15848 13.7588 7.52152 14.2151 8.06353C14.6713 8.60553 14.9211 9.29152 14.92 10C14.92 12 11.92 13 11.92 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="12" cy="17" r="1" fill="currentColor"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Controls Bar (Playback + Pagination) -->
+    <div class="controls-bar" id="controlsBar" style="display: none;">
+        <div class="playback-section">
+        <button class="btn-playback" id="playPauseBtn" title="재생/일시정지">
+          <svg class="icon-play" viewBox="0 0 24 24" fill="none">
+            <polygon points="5,3 19,12 5,21" fill="currentColor"/>
+          </svg>
+          <svg class="icon-pause" viewBox="0 0 24 24" fill="none" style="display: none;">
+            <rect x="6" y="4" width="4" height="16" fill="currentColor"/>
+            <rect x="14" y="4" width="4" height="16" fill="currentColor"/>
+          </svg>
+        </button>
+        <div class="playback-time" id="playbackTime">0:00 / 0:00</div>
+        <span class="repeat-indicator-simple" id="repeatIndicatorSimple"></span>
+        <div class="speed-control" id="speedControl">
+          <div class="speed-buttons">
+            <button class="btn-speed-down" id="speedDownBtn" title="배속 감소">−</button>
+            <button class="btn-speed-up" id="speedUpBtn" title="배속 증가">+</button>
+          </div>
+          <span class="speed-value" id="speedValue">1.00x</span>
+        </div>
+        <div class="pagination-section" id="paginationSection">
+          <div class="pagination-buttons">
+            <button class="btn-page" id="prevBtn" title="이전">
+              <span class="page-arrow">◀</span>
+            </button>
+            <button class="btn-page" id="nextBtn" title="다음">
+              <span class="page-arrow">▶</span>
+            </button>
+          </div>
+          <span class="page-info" id="pageInfo">1 / 1</span>
+        </div>
+        <div class="repeat-controls" id="repeatControls" style="display: none;">
+          <div class="repeat-status">
+            <span class="repeat-label">구간반복</span>
+            <span class="repeat-indicator" id="repeatIndicator"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Script List -->
+    <main class="script-list" id="scriptList">
+      <div class="empty-state" id="emptyState">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M14 2V8H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M16 13H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M16 17H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M10 9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <p>YouTube 영상 페이지에서<br>"스크립트 표시" 버튼을 클릭한 후<br>새로고침 버튼을 눌러주세요</p>
+      </div>
+    </main>
+
+    <!-- Fixed Action Bar (Below Script) -->
+    <div class="fixed-action-bar" id="fixedActionBar" style="display: none;">
+      <!-- Translation Display (Translate Mode Only) -->
+      <div class="fixed-translation" id="fixedTranslation" style="display: none;">
+        <div class="fixed-trans-text" id="fixedTransText">번역 중...</div>
+      </div>
+      <!-- Action Buttons -->
+      <div class="fixed-actions" id="fixedActions">
+        <button class="btn-fixed-action" id="fixedRecordBtn" title="녹음 (A)">
+          <span class="shortcut-key">A</span>
+          <span class="btn-label">녹음</span>
+        </button>
+        <button class="btn-fixed-action" id="fixedPlayOriginalBtn" title="원문 재생 (S)">
+          <span class="shortcut-key">S</span>
+          <span class="btn-label">원문 재생</span>
+        </button>
+        <button class="btn-fixed-action" id="fixedPlayRecordingBtn" title="녹음파일 재생 (D)">
+          <span class="shortcut-key">D</span>
+          <span class="btn-label">녹음파일 재생</span>
+        </button>
+        <button class="btn-fixed-action" id="fixedCompareBtn" title="비교재생 (F)">
+          <span class="shortcut-key">F</span>
+          <span class="btn-label">비교재생</span>
+        </button>
+        <button class="btn-fixed-action highlighted" id="fixedSaveBtn" title="저장 (G)">
+          <span class="shortcut-key">G</span>
+          <span class="btn-label">저장</span>
+        </button>
+      </div>
+      <div class="fixed-recording-status" id="fixedRecordingStatus" style="display: none;">
+        녹음을 종료하려면 Esc을 누르세요
+      </div>
+    </div>
+
+    <!-- Summary Controls Bar -->
+    <div class="summary-controls-bar" id="summaryControlsBar" style="display: none;">
+      <div class="summary-playback-section">
+        <button class="btn-playback" id="summaryPlayPauseBtn" title="재생/일시정지">
+          <svg class="icon-play" viewBox="0 0 24 24" fill="none">
+            <polygon points="5,3 19,12 5,21" fill="currentColor"/>
+          </svg>
+          <svg class="icon-pause" viewBox="0 0 24 24" fill="none" style="display: none;">
+            <rect x="6" y="4" width="4" height="16" fill="currentColor"/>
+            <rect x="14" y="4" width="4" height="16" fill="currentColor"/>
+          </svg>
+        </button>
+        <div class="playback-time" id="summaryPlaybackTime">0:00 / 0:00</div>
+        <div class="speed-control">
+          <div class="speed-buttons">
+            <button class="btn-speed-down" id="summarySpeedDownBtn" title="배속 감소">−</button>
+            <button class="btn-speed-up" id="summarySpeedUpBtn" title="배속 증가">+</button>
+          </div>
+          <span class="speed-value" id="summarySpeedValue">1.00x</span>
+        </div>
+      </div>
+      <div class="summary-toggle-section">
+        <button class="btn-summary-toggle active" id="summaryOriginalBtn" title="원어">원어</button>
+        <button class="btn-summary-toggle" id="summaryTranslatedBtn" title="번역">번역</button>
+      </div>
+      <div class="summary-pagination-section">
+        <div class="pagination-buttons">
+          <button class="btn-page" id="summaryPrevBtn" title="이전">
+            <span class="page-arrow">◀</span>
+          </button>
+          <button class="btn-page" id="summaryNextBtn" title="다음">
+            <span class="page-arrow">▶</span>
+          </button>
+        </div>
+        <span class="page-info" id="summaryPageInfo">1 / 1</span>
+      </div>
+    </div>
+
+    <!-- Summary Content -->
+    <main class="summary-content" id="summaryContent" style="display: none;">
+      <div class="summary-text" id="summaryText"></div>
+      <div class="summary-loading" id="summaryLoading" style="display: none;">
+        <div class="loading-spinner"></div>
+        <p>요약 중...</p>
+      </div>
+    </main>
+
+    <!-- Content Input Section (between summary and archive buttons) -->
+    <div class="content-input-section" id="contentInputSection" style="display: none;">
+      <div class="content-input-header">
+        <span>내용 입력</span>
+        <button class="btn-toggle-content-input" id="toggleContentInputBtn">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="content-input-body" id="contentInputBody">
+        <textarea class="content-input-textarea" id="contentInputTextarea" placeholder="요약 내용을 드래그하면 자동으로 입력됩니다.
+
+내용을 입력한 후 Enter를 하면, 이 창의 내용만 '선택 저장' 됩니다.
+모든 요약의 내용을 저장하려면 '전체 저장'을 누르세요."></textarea>
+        <div class="content-input-actions">
+          <button class="btn-content-save" id="saveSelectedContentBtn" title="이 창의 내용만 저장하기">선택 저장</button>
+          <button class="btn-content-save highlighted" id="saveFullSummaryBtn" title="모든 요약의 내용을 저장하기">전체 저장</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Saved Phrases for Current Video -->
+    <div class="video-phrases" id="videoPhrasesSection" style="display: none;">
+      <div class="phrases-header">
+        <span>저장된 표현</span>
+        <div class="phrases-header-actions">
+          <button class="btn-page-filter" id="currentPageFilterBtn" title="이번 페이지">
+            이번 페이지
+          </button>
+          <button class="btn-toggle-phrases" id="togglePhrasesBtn">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="phrases-list" id="videoPhrasesList"></div>
+    </div>
+
+    <!-- Archive Buttons -->
+    <div class="archive-buttons" id="archiveButtons" style="display: none;">
+      <button class="btn-archive" id="videoArchiveBtn">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M21 8V21H3V8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M23 3H1V8H23V3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        영상 내 보관함
+      </button>
+      <button class="btn-archive" id="masterArchiveBtn">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M9 22V12H15V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        전체 보관함
+      </button>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="loading-spinner"></div>
+      <p class="loading-text">스크립트 불러오는 중...</p>
+    </div>
+
+    <!-- Settings Modal (Translate Mode) -->
+    <div class="modal" id="settingsModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>번역 설정</h3>
+          <button class="btn-icon btn-close-modal" id="closeSettingsBtn">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="setting-item">
+            <label for="myLangSelect">나의 언어 (요약/기본 번역 언어)</label>
+            <select id="myLangSelect">
+              <option value="auto">자동 (브라우저 언어)</option>
+              <option value="KO">한국어</option>
+              <option value="EN">English</option>
+              <option value="JA">日本語</option>
+              <option value="ZH">中文</option>
+              <option value="ES">Español</option>
+              <option value="FR">Français</option>
+              <option value="DE">Deutsch</option>
+            </select>
+          </div>
+          <div class="setting-item">
+            <label for="sourceLangSelect">현재 언어 (스크립트 언어)</label>
+            <select id="sourceLangSelect">
+              <option value="EN">English</option>
+              <option value="KO">한국어</option>
+              <option value="JA">日本語</option>
+              <option value="ZH">中文</option>
+              <option value="ES">Español</option>
+              <option value="FR">Français</option>
+              <option value="DE">Deutsch</option>
+            </select>
+          </div>
+          <div class="setting-item">
+            <label for="targetLangSelect">번역할 언어</label>
+            <select id="targetLangSelect">
+              <option value="KO" selected>한국어</option>
+              <option value="EN">English</option>
+              <option value="JA">日本語</option>
+              <option value="ZH">中文</option>
+              <option value="ES">Español</option>
+              <option value="FR">Français</option>
+              <option value="DE">Deutsch</option>
+            </select>
+          </div>
+          <div class="setting-item">
+            <div class="setting-label-row">
+              <label for="apiModelInput">모델명</label>
+              <a href="#" id="apiGuideLink" class="api-guide-link">가이드 보기</a>
+            </div>
+            <input type="text" id="apiModelInput" placeholder="예: gemini-2.5-flash, gpt-4o, claude-sonnet-4-20250514">
+            <small class="setting-hint" id="modelHint">사용할 AI 모델명을 입력하세요 (가이드 참고)</small>
+          </div>
+          <div class="setting-item">
+            <div class="setting-label-row">
+              <label for="apiKeyInput">API Key</label>
+              <a href="#" id="apiGuideLink2" class="api-guide-link">가이드 보기</a>
+            </div>
+            <input type="password" id="apiKeyInput" placeholder="API 키를 입력하세요">
+          </div>
+          <div class="setting-item">
+            <label for="seekTimeInput">뒤로/앞으로 가기 시간 (초)</label>
+            <div class="seek-time-control">
+              <button class="btn-toggle" id="seekTimeDownBtn" title="1초 감소">−</button>
+              <input type="number" id="seekTimeInput" min="1" value="5" readonly>
+              <button class="btn-toggle" id="seekTimeUpBtn" title="1초 증가">+</button>
+            </div>
+          </div>
+          <div class="setting-item">
+            <label for="repeatKeyInput">구간반복 단축키</label>
+            <input type="text" id="repeatKeyInput" placeholder="R" maxlength="1" style="text-transform: uppercase;">
+          </div>
+          <div class="setting-item">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" id="loopPlaybackCheckbox" style="width: auto;">
+              <span>반복재생</span>
+            </label>
+          </div>
+          <button class="btn-save-settings" id="saveSettingsBtn">설정 저장</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Video Archive Modal -->
+    <div class="modal" id="videoArchiveModal">
+      <div class="modal-content modal-large">
+        <div class="modal-header">
+          <h3>영상 내 보관함</h3>
+          <button class="btn-icon btn-close-modal" id="closeVideoArchiveBtn">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="archive-list" id="videoArchiveList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Master Archive Modal -->
+    <div class="modal" id="masterArchiveModal">
+      <div class="modal-content modal-large">
+        <div class="modal-header">
+          <h3>전체 보관함</h3>
+          <button class="btn-icon btn-close-modal" id="closeMasterArchiveBtn">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="archive-list" id="masterArchiveList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="sidepanel.js"></script>
+</body>
+</html>

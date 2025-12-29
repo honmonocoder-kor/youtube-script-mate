@@ -1,0 +1,62 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube Script Mate",
+  "version": "1.2.0",
+  "description": "YouTube script learning tool with AI translation & Archive - supports multiple AI providers",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "sidePanel"
+  ],
+  "optional_permissions": [
+    "tabCapture"
+  ],
+  "host_permissions": [
+    "https://www.youtube.com/*",
+    "https://generativelanguage.googleapis.com/*",
+    "https://api.openai.com/*",
+    "https://api.anthropic.com/*",
+    "https://api.deepl.com/*",
+    "https://api-free.deepl.com/*",
+    "https://openapi.naver.com/*",
+    "https://*.openai.azure.com/*",
+    "https://api.cohere.ai/*",
+    "https://api.mistral.ai/*",
+    "https://api.perplexity.ai/*",
+    "https://api.groq.com/*"
+  ],
+  "action": {
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "YouTube Script Mate"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/watch*"],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["api-guide.html", "master-archive.html", "master-archive.js", "summary-archive.html", "summary-archive.js", "help.html"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

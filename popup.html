@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Biz Expression - English Learning</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="mode-selector">
+        <button class="btn-mode active" id="dialogModeBtn" data-mode="dialog">Dialog</button>
+        <button class="btn-mode" id="essayModeBtn" data-mode="essay">Essay</button>
+      </div>
+      <div class="header-actions">
+        <button class="btn-new" id="newDialogBtn" title="New Dialog">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span>New Dialog</span>
+        </button>
+        <button class="btn-icon" id="saveBtn" title="Save Dialog">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17 21H7C5.89543 21 5 20.1046 5 19V5C5 3.89543 5.89543 3 7 3H14L19 8V19C19 20.1046 18.1046 21 17 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M17 21V13H7V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M7 3V8H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <button class="btn-icon" id="settingsBtn" title="Settings">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+            <path d="M12 1V4M12 20V23M4.22 4.22L6.34 6.34M17.66 17.66L19.78 19.78M1 12H4M20 12H23M4.22 19.78L6.34 17.66M17.66 6.34L19.78 4.22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <button class="btn-icon btn-close" id="closeBtn" title="Close">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Input Section (shown when creating new dialog) -->
+    <div class="input-section" id="inputSection">
+      <div class="input-wrapper">
+        <input type="text" id="situationInput" placeholder="상황 (예: 커피챗, 면접, 팀 미팅...) - 선택사항" autocomplete="off">
+        <button class="btn-generate-essay" id="generateEssayBtn" title="입력된 문장을 활용하여 에세이를 생성하려면 이 버튼을 클릭하세요" style="display: none;">에세이 생성</button>
+      </div>
+      <div class="input-wrapper">
+        <input type="text" id="sentenceInput" placeholder="문장 (한글 또는 영어) - 선택사항" autocomplete="off">
+        <button class="btn-use-as-is" id="useAsIsBtn" title="입력된 문장을 그대로 활용하려면 이 버튼을 클릭하세요" style="display: none;">그대로 활용</button>
+        <button class="btn-submit" id="submitBtn" title="Generate Dialog">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Dialog Content -->
+    <main class="dialog-content" id="dialogContent">
+      <!-- Title Section -->
+      <div class="dialog-title-section">
+        <h1 class="dialog-title" id="dialogTitle">The flowers are lovely,</h1>
+        <h2 class="dialog-subtitle" id="dialogSubtitle">but you were the highlight.</h2>
+      </div>
+
+      <!-- Dialog Lines -->
+      <div class="dialog-lines" id="dialogLines">
+        <!-- Dialog lines will be inserted here -->
+      </div>
+    </main>
+
+    <!-- Essay Content -->
+    <main class="essay-content" id="essayContent" style="display: none;">
+      <!-- Title Section -->
+      <div class="essay-title-section">
+        <h1 class="essay-title" id="essayTitle">Essay Title</h1>
+        <h2 class="essay-subtitle" id="essaySubtitle">Essay Subtitle</h2>
+      </div>
+
+      <!-- Essay Pagination -->
+      <div class="essay-pagination" id="essayPagination" style="display: none;">
+        <button class="essay-pagination-btn" id="essayPrevBtn" title="Previous Page">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <span class="essay-pagination-info" id="essayPaginationInfo">1 / 1</span>
+        <button class="essay-pagination-btn" id="essayNextBtn" title="Next Page">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Essay Card -->
+      <div class="essay-card-wrapper">
+        <div class="essay-card" id="essayCard">
+          <!-- Essay content will be inserted here -->
+        </div>
+      </div>
+
+      <!-- Empty space (30% of screen) -->
+      <div class="essay-bottom-space"></div>
+    </main>
+
+
+    <!-- Translation Tooltip -->
+    <div class="tooltip" id="tooltip"></div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="loading-spinner"></div>
+      <p class="loading-text">Generating dialog...</p>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Settings</h3>
+          <button class="btn-icon btn-close-modal" id="closeSettingsBtn">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="setting-item">
+            <label for="apiKeyInput">Gemini API Key</label>
+            <input type="password" id="apiKeyInput" placeholder="Enter your Gemini API key">
+          </div>
+          <button class="btn-save-settings" id="saveSettingsBtn">Save Settings</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Saved Dialogs Modal -->
+    <div class="modal" id="savedModal">
+      <div class="modal-content modal-saved">
+        <div class="modal-header">
+          <h3>Saved Dialogs</h3>
+          <button class="btn-icon btn-close-modal" id="closeSavedBtn">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="saved-list" id="savedList">
+            <!-- Saved dialogs will be listed here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
